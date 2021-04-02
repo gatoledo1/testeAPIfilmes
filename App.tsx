@@ -1,21 +1,59 @@
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import Component from "./component";
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+interface filmeItens {
+  Title: string;
+  Year: string;
+  Type: string;
+  Poster: string;
 }
+
+function App() {
+
+  const [item, setItem] = useState(new Array<filmeItens>())
+
+  useEffect(() => {
+
+    LoadItens()
+
+  }, [])
+
+  async function LoadItens() {
+    let keyAPI = "28d0dee8"
+    await fetch(`http://www.omdbapi.com/?s="Batman"&apikey=${keyAPI}&page="default"`)
+      .then((res) => res.json())
+      .then(async (json) => {
+        let array = await json.Search;
+        setItem(array)
+      })
+  }
+  return (
+    <ScrollView>
+      <StatusBar style="dark" />
+      <View style={styles.container}>
+        {
+          item.map((itens, index) =>
+            <Component key={index} titulo={itens.Title} ano={itens.Year} tipo={itens.Type} poster={itens.Poster} />
+          )
+        }
+
+      </View>
+    </ScrollView>
+
+  )
+
+}
+
+export default App;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f3f3f3',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingTop: 60,
   },
 });
